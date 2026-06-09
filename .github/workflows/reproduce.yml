@@ -10,6 +10,8 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,6 +28,3 @@ jobs:
 
       - name: Run verification
         run: python src/reproduce_all.py
-
-      # - name: Run tests
-      #   run: pytest tests/
