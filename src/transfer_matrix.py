@@ -21,13 +21,11 @@ def build_transfer_matrix(alpha, eps=None):
 
     def set_edge(i, j, gamma):
         ratio = C[VERTEX_ORDER[j]] / C[VERTEX_ORDER[i]]
-        # 如果两端容量在数值上相等（容差 1e-50），或特征指数为零，视为免费边（不衰减）
-        if abs(ratio - mp.mpf(1)) < mp.mpf('1e-50') or gamma == 0:
-            T[i][j] = mp.mpc(1)
-        else:
-            val = mp.e ** (mp.mpc(0, 1) * gamma * mp.log(ratio))
+        # 所有边都计算相位，但只有特征指数为零的边才免衰减
+        val = mp.e ** (mp.mpc(0, 1) * gamma * mp.log(ratio))
+        if gamma != 0:
             val *= mp.exp(-eps)
-            T[i][j] = val
+        T[i][j] = val
 
     # Edges from A (0)
     set_edge(0, 1, GAMMA_FREE)      # A->M: exponential map (free)
@@ -38,7 +36,7 @@ def build_transfer_matrix(alpha, eps=None):
     # Edges from M (1)
     set_edge(1, 0, GAMMA_ANALYTIC)  # M->A: logarithm
     set_edge(1, 2, GAMMA_ANALYTIC)  # M->I: log-derivative
-    set_edge(1, 4, GAMMA_ANALYTIC)  # M->S: Mellin transform (C_S = C_M → free)
+    set_edge(1, 4, GAMMA_ANALYTIC)  # M->S: Mellin transform (decays)
     set_edge(1, 8, GAMMA_FREE)      # M->C: identity morphism (free)
 
     # Edges from I (2)
@@ -54,7 +52,7 @@ def build_transfer_matrix(alpha, eps=None):
     set_edge(3, 4, GAMMA_ANALYTIC)  # D->S: Fourier transform
 
     # Edges from S (4)
-    set_edge(4, 1, GAMMA_ANALYTIC)  # S->M: inverse Mellin (C_M = C_S → free)
+    set_edge(4, 1, GAMMA_ANALYTIC)  # S->M: inverse Mellin (decays)
     set_edge(4, 2, GAMMA_ANALYTIC)  # S->I: inverse Laplace
     set_edge(4, 3, GAMMA_ANALYTIC)  # S->D: inverse Fourier
 
