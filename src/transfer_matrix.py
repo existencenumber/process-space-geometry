@@ -21,8 +21,8 @@ def build_transfer_matrix(alpha, eps=None):
 
     def set_edge(i, j, gamma):
         ratio = C[VERTEX_ORDER[j]] / C[VERTEX_ORDER[i]]
-        # 如果两端容量相等，联络系数为零，视为免费边（不衰减）
-        if ratio == mp.mpf(1) or gamma == 0:
+        # 如果两端容量在数值上相等（容差 1e-50），或特征指数为零，视为免费边（不衰减）
+        if abs(ratio - mp.mpf(1)) < mp.mpf('1e-50') or gamma == 0:
             T[i][j] = mp.mpc(1)
         else:
             val = mp.e ** (mp.mpc(0, 1) * gamma * mp.log(ratio))
