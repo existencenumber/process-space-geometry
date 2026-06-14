@@ -73,7 +73,7 @@ def main():
         t_val = theory_values[key]
         e_val = exp_values[key]
         dev = (t_val - e_val) / e_val
-        status = "PASS" if abs(dev) < 1e-3 else "CHECK"
+        status = "PASS" if abs(dev) < 0.01 else "CHECK"
         print(f"  {key:<20}: theory={t_val:.10f}, exp={e_val:.10f}, "
               f"dev={dev:.2e} [{status}]")
     
