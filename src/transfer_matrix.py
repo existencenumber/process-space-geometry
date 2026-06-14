@@ -20,12 +20,14 @@ def build_transfer_matrix(alpha, eps=None):
     T = [[mp.mpc(0) for _ in range(9)] for _ in range(9)]
 
     def set_edge(i, j, gamma):
-        ratio = C[VERTEX_ORDER[j]] / C[VERTEX_ORDER[i]]
+    ratio = C[VERTEX_ORDER[j]] / C[VERTEX_ORDER[i]]
+    if gamma == 0:
+        T[i][j] = mp.mpc(1)
+    else:
         val = mp.e ** (mp.mpc(0, 1) * gamma * mp.log(ratio))
-        if gamma != 0:                     # non-free edge: apply decay
-            val *= mp.exp(-eps)
+        val *= mp.exp(-eps)
         T[i][j] = val
-
+        
     # Edges from A (0)
     set_edge(0, 1, GAMMA_FREE)      # A->M: exponential map (free)
     set_edge(0, 2, GAMMA_LIMIT)     # A->I: Riemann limit
